@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>QR Kalimat</title>
+<style>
+@font-face{font-family:'Nunito';src:url('Nunito.ttf');font-weight:200 1000}
+:root{--bg:#000;--sf:#0e0e0e;--bd:#1f1f1f;--tx:#f2f2f2;--mu:#8b9396;--ac:#00e5ff;--on:#001a1f;--dg:#ff5c6c}
+:root[data-theme=light]{--bg:#f4f7f8;--sf:#fff;--bd:#dce4e7;--tx:#10191c;--mu:#5d6b70;--ac:#00a3ba;--on:#fff;--dg:#d63447}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Nunito',system-ui,sans-serif;overscroll-behavior:none}
+body{overflow:hidden;-webkit-user-select:none;user-select:none}
+textarea{-webkit-user-select:text;user-select:text}
+button{font:inherit;color:inherit;background:none;border:0}
+svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 12px 8px 20px}
+h1{font-size:26px;font-weight:800}
+.ib{width:44px;height:44px;border-radius:50%;display:grid;place-items:center}
+.ib:active{background:var(--sf)}
+#list{position:relative;height:calc(100% - 66px);overflow-y:auto;padding:6px 16px 110px;display:flex;flex-direction:column;gap:10px}
+.card{display:flex;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:10px 4px 10px 2px}
+.card:active{border-color:var(--ac)}
+.card.mv,.card.fin{transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.card.up{position:relative;z-index:5;border-color:var(--ac);transition:none}
+.card.up.fin{transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.gr{width:34px;height:56px;flex:none;display:grid;place-items:center;color:var(--mu);touch-action:none}
+.gr svg{width:20px;height:20px;stroke-width:3}
+.th{width:64px;height:64px;flex:none;display:grid;place-items:center;background:#fff;border-radius:10px;overflow:hidden}
+.t{flex:1;min-width:0;font-size:16px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.card .ib{width:40px;height:40px;color:var(--mu)}
+.card .ib svg{width:20px;height:20px}
+.empty{margin:auto;text-align:center;color:var(--mu);padding:0 30px}
+.empty svg{width:72px;height:72px;stroke-width:1.4;color:var(--ac);margin-bottom:12px}
+.empty p{font-size:18px;font-weight:800;color:var(--tx)}
+.empty small{font-size:14px;font-weight:600}
+#fab{position:fixed;right:20px;bottom:24px;width:60px;height:60px;border-radius:50%;background:var(--ac);color:var(--on);display:grid;place-items:center}
+#fab svg{width:30px;height:30px;stroke-width:2.2}
+.ov{position:fixed;inset:0;display:none;z-index:10}
+.ov.on{display:flex}
+#sheet,#cf,#pd{background:rgba(0,0,0,.6)}
+#sheet{align-items:flex-end}
+#cf,#pd{align-items:center;justify-content:center;z-index:20;padding:24px}
+.sb{width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:26px 26px 0 0;padding:20px 18px 18px}
+#cf .sb,#pd .sb{border-radius:22px;max-width:360px}
+.sb h2{font-size:20px;font-weight:800;margin-bottom:12px}
+textarea{width:100%;min-height:120px;resize:none;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);border-radius:14px;padding:12px;font:600 17px/1.4 'Nunito',system-ui,sans-serif;outline:0}
+textarea:focus{border-color:var(--ac)}
+.row{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;height:50px;border-radius:16px;font-weight:800;font-size:16px;border:1.5px solid var(--bd)}
+.btn.p{background:var(--ac);color:var(--on);border-color:var(--ac)}
+.btn.d{color:var(--dg);border-color:var(--dg)}
+.btn:disabled{opacity:.35}
+#view,#set{background:var(--bg);flex-direction:column}
+.top{display:flex;align-items:center;gap:4px;padding:10px 10px 4px}
+.top b{font-size:20px;font-weight:800}
+#vm{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 20px 24px;min-height:0}
+.qc{background:#fff;border-radius:20px;border:1px solid var(--bd);line-height:0;overflow:hidden}
+#vt{font-size:20px;font-weight:700;text-align:center;max-height:24vh;overflow-y:auto;word-break:break-word;line-height:1.35}
+.sec{padding:14px 18px}
+.sec h3{font-size:14px;font-weight:700;color:var(--mu);margin-bottom:10px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border:1.5px solid var(--bd);border-radius:18px;background:var(--sf);color:var(--mu);font-weight:800}
+.opt.on{border-color:var(--ac);color:var(--ac)}
+#pw{display:none;margin:12px 0 0!important}
+#pw.on{display:block}
+#ti,#pw,#pi{width:100%;height:48px;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);border-radius:14px;padding:0 12px;margin-bottom:10px;font:800 17px 'Nunito',system-ui,sans-serif;outline:0;-webkit-user-select:text;user-select:text}
+#ti:focus,#pw:focus,#pi:focus{border-color:var(--ac)}
+.t.w{display:block}
+.t b{display:block;font-weight:800;font-size:17px;word-break:break-word}
+.t span{display:block;font-size:14px;font-weight:600;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#vh{font-size:22px;font-weight:800;text-align:center;word-break:break-word}
+.pr{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700;font-size:15px}
+.pr input{-webkit-appearance:none;appearance:none;width:24px;height:24px;flex:none;border:1.8px solid var(--mu);border-radius:7px;display:grid;place-items:center;margin:0}
+.pr input:checked{background:var(--ac);border-color:var(--ac)}
+.pr input:checked::after{content:'';width:6px;height:11px;border:solid var(--on);border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.note{font-size:13px;font-weight:600;color:var(--mu);margin-top:12px}
+</style>
+</head>
+<body>
+<header><h1>QR Kalimat</h1><button class="ib" id="bs" aria-label="Setelan"></button></header>
+<div id="list"></div>
+<button id="fab" aria-label="Tambah kalimat"></button>
+
+<div class="ov" id="sheet"><div class="sb">
+ <h2 id="st">Kalimat baru</h2>
+ <input id="ti" type="text" maxlength="60" placeholder="Judul (tampil di layar awal)">
+ <textarea id="ta" placeholder="Isi teks (yang jadi kode QR)"></textarea>
+ <label class="pr"><input type="checkbox" id="pv">Privasi: kunci dengan password</label>
+ <input id="pw" type="password" placeholder="Buat password">
+ <div class="row"><button class="btn" id="bc">Batal</button><button class="btn p" id="bv" disabled>Simpan</button></div>
+</div></div>
+
+<div class="ov" id="view">
+ <div class="top"><button class="ib" id="vx" aria-label="Tutup"></button></div>
+ <div id="vm"><div id="vh"></div><div class="qc"><canvas id="vq"></canvas></div><div id="vt"></div></div>
+</div>
+
+<div class="ov" id="set">
+ <div class="top"><button class="ib" id="sx" aria-label="Kembali"></button><b>Setelan</b></div>
+ <div class="sec"><h3>Tema</h3><div class="opts">
+  <button class="opt" data-th="dark" id="od"></button><button class="opt" data-th="light" id="ol"></button></div></div>
+ <div class="sec"><h3>Data</h3><button class="btn d" id="ca" style="width:100%">Hapus semua kalimat</button>
+  <p class="note">QR dibuat langsung di HP, tanpa internet. Kalimat tersimpan di aplikasi.</p></div>
+</div>
+
+<div class="ov" id="pd"><div class="sb"><h2>Catatan terkunci</h2>
+ <input id="pi" type="password" placeholder="Masukkan password">
+ <p class="note" id="pe" style="color:var(--dg);margin:0;min-height:18px"></p>
+ <div class="row"><button class="btn" id="pn">Batal</button><button class="btn p" id="py">Buka</button></div></div></div>
+
+<div class="ov" id="cf"><div class="sb"><h2 id="cm"></h2>
+ <div class="row"><button class="btn" id="cn">Batal</button><button class="btn d" id="cy">Hapus</button></div></div></div>
+
+<script>
+const $=s=>document.querySelector(s),A=window.Android;
+const P={lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',grip:'<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/>',plus:'<path d="M12 5v14M5 12h14"/>',set:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',back:'<path d="M15 5l-7 7 7 7"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>',qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v1M14 21h1M18 18h3v3h-3z"/>'};
+const ico=n=>'<svg class="i" viewBox="0 0 24 24">'+P[n]+'</svg>';
+const ls={g(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},s(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let items=ls.g('qrk_items',[]),theme=ls.g('qrk_theme','dark'),editId=null,cur=0;
+
+/* ===== Generator QR (byte mode, koreksi level M, offline) ===== */
+const QR=(()=>{
+const EC=[-1,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26,26,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28];
+const NB=[-1,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16,17,17,18,20,21,23,25,26,28,29,31,33,35,37,38,40,43,45,47,49];
+const raw=v=>{let r=(16*v+128)*v+64;if(v>=2){const a=Math.floor(v/7)+2;r-=(25*a-10)*a-55;if(v>=7)r-=36}return r};
+const dcw=v=>(raw(v)>>3)-EC[v]*NB[v];
+const mul=(x,y)=>{let z=0;for(let i=7;i>=0;i--){z=(z<<1)^((z>>>7)*0x11D);z^=((y>>>i)&1)*x}return z};
+const rsDiv=d=>{const r=new Array(d-1).fill(0);r.push(1);let t=1;for(let i=0;i<d;i++){for(let j=0;j<r.length;j++){r[j]=mul(r[j],t);if(j+1<r.length)r[j]^=r[j+1]}t=mul(t,2)}return r};
+const rsRem=(d,dv)=>{const r=dv.map(()=>0);for(const b of d){const f=b^r.shift();r.push(0);dv.forEach((c,i)=>r[i]^=mul(c,f))}return r};
+const bit=(x,i)=>((x>>>i)&1)!=0;
+function make(text){
+ const by=Array.from(new TextEncoder().encode(text));let ver=0;
+ for(let v=1;v<=40;v++){if(4+(v<=9?8:16)+8*by.length<=dcw(v)*8){ver=v;break}}
+ if(!ver)return null;
+ const bits=[],put=(v,n)=>{for(let i=n-1;i>=0;i--)bits.push((v>>>i)&1)};
+ put(4,4);put(by.length,ver<=9?8:16);by.forEach(b=>put(b,8));
+ put(0,Math.min(4,dcw(ver)*8-bits.length));put(0,(8-bits.length%8)%8);
+ const data=[];for(let i=0;i<bits.length;i+=8){let b=0;for(let j=0;j<8;j++)b=(b<<1)|bits[i+j];data.push(b)}
+ for(let p=0xEC;data.length<dcw(ver);p^=0xEC^0x11)data.push(p);
+ const nb=NB[ver],el=EC[ver],rc=raw(ver)>>3,ns=nb-rc%nb,sl=Math.floor(rc/nb),dv=rsDiv(el),bl=[];
+ for(let i=0,k=0;i<nb;i++){const dl=sl-el+(i<ns?0:1),d=data.slice(k,k+dl);k+=dl;const e=rsRem(d,dv);if(i<ns)d.push(0);bl.push(d.concat(e))}
+ const all=[];for(let i=0;i<bl[0].length;i++)bl.forEach((b,j)=>{if(i!=sl-el||j>=ns)all.push(b[i])});
+ const n=ver*4+17,m=Array.from({length:n},()=>Array(n).fill(false)),fn=Array.from({length:n},()=>Array(n).fill(false));
+ const set=(x,y,v)=>{m[y][x]=v;fn[y][x]=true};
+ for(let i=0;i<n;i++){set(6,i,i%2==0);set(i,6,i%2==0)}
+ const fd=(x,y)=>{for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const d=Math.max(Math.abs(dx),Math.abs(dy)),a=x+dx,b=y+dy;if(a>=0&&a<n&&b>=0&&b<n)set(a,b,d!=2&&d!=4)}};
+ fd(3,3);fd(n-4,3);fd(3,n-4);
+ const na=ver==1?0:Math.floor(ver/7)+2,ps=[];
+ if(na){const st=ver==32?26:Math.ceil((ver*4+4)/(na*2-2))*2;ps.push(6);for(let p=n-7;ps.length<na;p-=st)ps.splice(1,0,p)}
+ for(let i=0;i<na;i++)for(let j=0;j<na;j++){if((i==0&&j==0)||(i==0&&j==na-1)||(i==na-1&&j==0))continue;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)set(ps[i]+dx,ps[j]+dy,Math.max(Math.abs(dx),Math.abs(dy))!=1)}
+ const fmt=mk=>{let r=mk;for(let i=0;i<10;i++)r=(r<<1)^((r>>>9)*0x537);const b=((mk<<10)|r)^0x5412;
+  for(let i=0;i<=5;i++)set(8,i,bit(b,i));set(8,7,bit(b,6));set(8,8,bit(b,7));set(7,8,bit(b,8));for(let i=9;i<15;i++)set(14-i,8,bit(b,i));
+  for(let i=0;i<8;i++)set(n-1-i,8,bit(b,i));for(let i=8;i<15;i++)set(8,n-15+i,bit(b,i));set(8,n-8,true)};
+ fmt(0);
+ if(ver>=7){let r=ver;for(let i=0;i<12;i++)r=(r<<1)^((r>>>11)*0x1F25);const b=(ver<<12)|r;for(let i=0;i<18;i++){const c=bit(b,i),a=n-11+i%3,d=Math.floor(i/3);set(a,d,c);set(d,a,c)}}
+ let k=0;
+ for(let r=n-1;r>=1;r-=2){if(r==6)r=5;for(let v=0;v<n;v++)for(let j=0;j<2;j++){const x=r-j,y=((r+1)&2)==0?n-1-v:v;if(!fn[y][x]&&k<all.length*8){m[y][x]=bit(all[k>>>3],7-(k&7));k++}}}
+ const inv=(c,x,y)=>[(x+y)%2==0,y%2==0,x%3==0,(x+y)%3==0,(Math.floor(x/3)+Math.floor(y/2))%2==0,x*y%2+x*y%3==0,(x*y%2+x*y%3)%2==0,((x+y)%2+x*y%3)%2==0][c];
+ const ap=c=>{for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(!fn[y][x]&&inv(c,x,y))m[y][x]=!m[y][x]};
+ const pen=()=>{let p=0;const ln=a=>{let r=1;for(let i=1;i<a.length;i++){if(a[i]==a[i-1]){r++;if(r==5)p+=3;else if(r>5)p++}else r=1}
+   for(let i=0;i+11<=a.length;i++){const s=a.slice(i,i+11).map(Number).join('');if(s=='10111010000'||s=='00001011101')p+=40}};
+  for(let y=0;y<n;y++)ln(m[y]);for(let x=0;x<n;x++)ln(m.map(r=>r[x]));
+  let d=0;for(let y=0;y<n;y++)for(let x=0;x<n;x++){if(m[y][x])d++;if(x<n-1&&y<n-1&&m[y][x]==m[y][x+1]&&m[y][x]==m[y+1][x]&&m[y][x]==m[y+1][x+1])p+=3}
+  return p+(Math.ceil(Math.abs(d*20-n*n*10)/(n*n))-1)*10};
+ let best=0,bp=1e9;
+ for(let c=0;c<8;c++){ap(c);fmt(c);const p=pen();if(p<bp){bp=p;best=c}ap(c)}
+ ap(best);fmt(best);return{n,m};
+}
+return{make}})();
+
+function drawQR(cv,text,css){
+ const q=QR.make(text);if(!q)return false;
+ const dpr=window.devicePixelRatio||1,sc=Math.max(1,Math.floor(css*dpr/(q.n+8))),px=sc*(q.n+8),c=cv.getContext('2d');
+ cv.width=cv.height=px;cv.style.width=cv.style.height=(px/dpr)+'px';
+ c.fillStyle='#fff';c.fillRect(0,0,px,px);c.fillStyle='#000';
+ for(let y=0;y<q.n;y++)for(let x=0;x<q.n;x++)if(q.m[y][x])c.fillRect((x+4)*sc,(y+4)*sc,sc,sc);
+ return true}
+
+/* ===== Tampilan ===== */
+const show=s=>$(s).classList.add('on'),hide=s=>{$(s).classList.remove('on');if(s=='#sheet')$('#ta').blur()};
+const save=()=>ls.s('qrk_items',items);
+const lk=it=>!!(it.priv&&it.ph),shown=it=>it.text;
+const hs=s=>{let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return(4294967296*(2097151&b)+(a>>>0)).toString(36)};
+function askPw(it,fn){$('#pi').value='';$('#pe').textContent='';
+ $('#py').onclick=()=>{if(hs(it.salt+$('#pi').value)==it.ph){$('#pi').blur();hide('#pd');fn()}else{$('#pe').textContent='Password salah';$('#pi').value=''}};
+ show('#pd');setTimeout(()=>$('#pi').focus(),120)}
+function tgl(){const ex=editId&&items.find(x=>x.id==editId);$('#pw').classList.toggle('on',$('#pv').checked);$('#pw').placeholder=(ex&&lk(ex))?'Password baru (kosongkan = tetap)':'Buat password';chk()}
+function render(){
+ const L=$('#list');L.innerHTML='';
+ if(!items.length){L.innerHTML='<div class="empty">'+ico('qr')+'<p>Belum ada kalimat</p><small>Tekan tombol + untuk mengubah sebuah kalimat jadi kode QR.</small></div>';return}
+ items.forEach((it,i)=>{
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML='<div class="gr">'+ico('grip')+'</div><div class="th"><canvas></canvas></div><div class="t"></div><button class="ib" data-a="e" aria-label="Ubah">'+ico('edit')+'</button><button class="ib" data-a="d" aria-label="Hapus">'+ico('trash')+'</button>';
+  const T=c.querySelector('.t'),L2=lk(it);
+  if(it.title||L2){T.className='t w';T.innerHTML='<b></b><span></span>';T.firstChild.textContent=it.title||'Catatan terkunci';T.lastChild.textContent=L2?'••••••':it.text}else T.textContent=it.text;
+  if(L2){const th=c.querySelector('.th');th.innerHTML=ico('lock');th.style.color='#333'}else drawQR(c.querySelector('canvas'),it.text,64);
+  c.querySelector('.gr').onpointerdown=e=>startDrag(e,c,i);
+  const G=f=>lk(it)?askPw(it,f):f();
+  c.onclick=e=>{if(e.target.closest('.gr'))return;const b=e.target.closest('button');if(!b)return G(()=>openView(i));b.dataset.a=='e'?G(()=>openEdit(it.id)):G(()=>ask('Hapus kalimat ini?','Hapus',()=>{items=items.filter(x=>x.id!=it.id);save();render()}))};
+  L.appendChild(c)})}
+function startDrag(e,card,i){
+ if(items.length<2)return;
+ e.preventDefault();
+ const L=$('#list'),cs=[...L.children],gap=10,tops=cs.map(c=>c.offsetTop),hs=cs.map(c=>c.offsetHeight),
+  y0=e.clientY,s0=L.scrollTop,g=e.currentTarget;let y=y0,j=i,raf;
+ g.setPointerCapture(e.pointerId);
+ cs.forEach((c,k)=>{if(k!=i)c.classList.add('mv')});card.classList.add('up');
+ const upd=()=>{
+  const dy=y-y0+L.scrollTop-s0,sh=hs[i]+gap;
+  card.style.transform='translateY('+dy+'px) scale(1.02)';
+  const ctr=tops[i]+hs[i]/2+dy;let n=0;
+  cs.forEach((c,k)=>{if(k!=i&&tops[k]+hs[k]/2<ctr)n++});j=n;
+  cs.forEach((c,k)=>{if(k!=i)c.style.transform=(k>i&&k<=j)?'translateY('+(-sh)+'px)':(k<i&&k>=j)?'translateY('+sh+'px)':''})};
+ const loop=()=>{const r=L.getBoundingClientRect();let v=0;if(y<r.top+70)v=-10;else if(y>r.bottom-70)v=10;
+  if(v){L.scrollTop+=v;upd()}raf=requestAnimationFrame(loop)};
+ const mv=ev=>{y=ev.clientY;upd()};
+ const end=()=>{
+  cancelAnimationFrame(raf);g.removeEventListener('pointermove',mv);g.removeEventListener('pointerup',end);g.removeEventListener('pointercancel',end);
+  let t=0;if(j>i){for(let k=i+1;k<=j;k++)t+=hs[k]+gap}else if(j<i){for(let k=j;k<i;k++)t-=hs[k]+gap}
+  card.classList.add('fin');card.style.transform='translateY('+t+'px)';
+  setTimeout(()=>{if(j!=i){const m=items.splice(i,1)[0];items.splice(j,0,m);save()}render()},250)};
+ g.addEventListener('pointermove',mv);g.addEventListener('pointerup',end);g.addEventListener('pointercancel',end);
+ upd();raf=requestAnimationFrame(loop)}
+function openEdit(id){editId=id||null;const it=items.find(x=>x.id==id);$('#ti').value=it?it.title||'':'';$('#ta').value=it?it.text:'';$('#pv').checked=!!(it&&lk(it));$('#pw').value='';tgl();$('#st').textContent=it?'Ubah kalimat':'Kalimat baru';chk();show('#sheet');setTimeout(()=>$('#ta').focus(),120)}
+function chk(){const t=$('#ta').value.trim(),ex=editId&&items.find(x=>x.id==editId),need=$('#pv').checked&&!$('#pw').value&&!(ex&&lk(ex));$('#bv').disabled=!t||!QR.make(t)||need}
+function ask(msg,yes,fn){$('#cm').textContent=msg;$('#cy').textContent=yes;$('#cy').onclick=()=>{hide('#cf');fn()};show('#cf')}
+function drawView(){const it=items[cur];$('#vh').textContent=it.title||'';$('#vh').style.display=it.title?'':'none';$('#vt').textContent=shown(it);drawQR($('#vq'),it.text,Math.min(innerWidth-40,innerHeight*.52))}
+function openView(i){cur=i;show('#view');drawView();A&&A.bright(true)}
+function closeView(){hide('#view');A&&A.bright(false)}
+function applyTheme(){document.documentElement.dataset.theme=theme;A&&A.theme(theme=='dark');document.querySelectorAll('.opt').forEach(b=>b.classList.toggle('on',b.dataset.th==theme))}
+
+$('#bs').innerHTML=ico('set');$('#fab').innerHTML=ico('plus');$('#vx').innerHTML=ico('x');$('#sx').innerHTML=ico('back');
+$('#od').innerHTML=ico('moon')+'Gelap';$('#ol').innerHTML=ico('sun')+'Terang';
+$('#fab').onclick=()=>openEdit();$('#bs').onclick=()=>show('#set');$('#sx').onclick=()=>hide('#set');$('#vx').onclick=closeView;
+$('#ta').oninput=chk;$('#pw').oninput=chk;$('#pv').onchange=tgl;
+$('#pn').onclick=()=>{$('#pi').blur();hide('#pd')};$('#pi').onkeydown=e=>{if(e.key=='Enter')$('#py').click()};$('#bc').onclick=()=>hide('#sheet');
+$('#sheet').onclick=e=>{if(e.target.id=='sheet')hide('#sheet')};
+$('#bv').onclick=()=>{const t=$('#ta').value.trim();if(!t)return;const it=items.find(x=>x.id==editId);
+ const pv=$('#pv').checked,ti=$('#ti').value.trim(),pw=$('#pw').value;
+ const o=it||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)};
+ o.text=t;o.title=ti;o.priv=pv;
+ if(!pv){delete o.ph;delete o.salt}else if(pw){o.salt=Math.random().toString(36).slice(2);o.ph=hs(o.salt+pw)}
+ if(!it)items.unshift(o);
+ save();hide('#sheet');render()};
+$('#cn').onclick=()=>hide('#cf');
+$('#ca').onclick=()=>ask('Hapus semua kalimat?','Hapus semua',()=>{items=[];save();render()});
+document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{theme=b.dataset.th;ls.s('qrk_theme',theme);applyTheme()});
+window.onBack=()=>{for(const s of['#pd','#cf','#sheet','#view','#set']){if($(s).classList.contains('on')){s=='#view'?closeView():hide(s);return true}}return false};
+window.onresize=()=>{if($('#view').classList.contains('on'))drawView()};
+applyTheme();render();
+</script>
+</body>
+</html>
