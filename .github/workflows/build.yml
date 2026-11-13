@@ -23,7 +23,7 @@ jobs:
           set -e
           yes | sdkmanager --licenses > /dev/null 2>&1 || true
           A=app/src/main
-          mkdir -p $A/assets $A/java/com/qrkalimat/app $A/res/drawable $A/res/mipmap-anydpi-v26
+          mkdir -p $A/assets $A/java/com/qrkalimat/app $A/res/drawable $A/res/drawable-nodpi $A/res/mipmap-anydpi-v26
           cp index.html $A/assets/index.html
           curl -fsSL "https://github.com/google/fonts/raw/main/ofl/nunito/Nunito%5Bwght%5D.ttf" -o $A/assets/Nunito.ttf || echo "Font gagal diunduh, pakai font bawaan"
 
@@ -63,7 +63,24 @@ jobs:
 
           cat > $A/AndroidManifest.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"> <application android:label="QR Kalimat" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:theme="@android:style/Theme.Material.NoActionBar"> <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|uiMode" android:windowSoftInputMode="adjustResize"> <intent-filter> <action android:name="android.intent.action.MAIN"/> <category android:name="android.intent.category.LAUNCHER"/> </intent-filter> </activity> </application> </manifest>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:label="QR Kalimat"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
+                  android:theme="@android:style/Theme.Material.NoActionBar">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize|keyboardHidden|uiMode"
+                      android:windowSoftInputMode="adjustResize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
           EOF
 
           cat > $A/java/com/qrkalimat/app/MainActivity.java <<'EOF'
@@ -79,9 +96,16 @@ jobs:
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
+          import android.content.Intent;
+          import android.net.Uri;
+          import java.io.ByteArrayOutputStream;
+          import java.io.InputStream;
+          import java.io.OutputStream;
+          import org.json.JSONObject;
 
           public class MainActivity extends Activity {
               WebView web;
+              String pending = "";
 
               @Override
               protected void onCreate(Bundle b) {
@@ -101,6 +125,28 @@ jobs:
               }
 
               class Bridge {
+              @JavascriptInterface
+              public void exportData(final String json) {
+                  pending = json;
+                  runOnUiThread(() -> {
+                      Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                      i.addCategory(Intent.CATEGORY_OPENABLE);
+                      i.setType("application/json");
+                      i.putExtra(Intent.EXTRA_TITLE, "qr-kalimat-backup.json");
+                      startActivityForResult(i, 1);
+                  });
+              }
+
+              @JavascriptInterface
+              public void importData() {
+                  runOnUiThread(() -> {
+                      Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                      i.addCategory(Intent.CATEGORY_OPENABLE);
+                      i.setType("*/*");
+                      startActivityForResult(i, 2);
+                  });
+              }
+
                   @JavascriptInterface
                   public void bright(final boolean on) {
                       runOnUiThread(() -> {
@@ -126,6 +172,31 @@ jobs:
               }
 
               @Override
+              protected void onActivityResult(int rq, int rs, Intent d) {
+                  super.onActivityResult(rq, rs, d);
+                  if (rs != RESULT_OK || d == null || d.getData() == null) return;
+                  Uri u = d.getData();
+                  try {
+                      if (rq == 1) {
+                          OutputStream o = getContentResolver().openOutputStream(u);
+                          o.write(pending.getBytes("UTF-8"));
+                          o.close();
+                          web.evaluateJavascript("window.onDone&&window.onDone('Data tersimpan')", null);
+                      } else if (rq == 2) {
+                          InputStream in = getContentResolver().openInputStream(u);
+                          ByteArrayOutputStream b = new ByteArrayOutputStream();
+                          byte[] buf = new byte[8192];
+                          int n;
+                          while ((n = in.read(buf)) > 0) b.write(buf, 0, n);
+                          in.close();
+                          web.evaluateJavascript("window.onImport&&window.onImport(" + JSONObject.quote(b.toString("UTF-8")) + ")", null);
+                      }
+                  } catch (Exception e) {
+                      web.evaluateJavascript("window.onDone&&window.onDone('Gagal memproses file')", null);
+                  }
+              }
+
+              @Override
               public void onBackPressed() {
                   web.evaluateJavascript("window.onBack?window.onBack():false", v -> {
                       if (!"true".equals(v)) finish();
@@ -136,12 +207,21 @@ jobs:
 
           cat > $A/res/mipmap-anydpi-v26/ic_launcher.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android"> <background android:drawable="@android:color/black"/> <foreground android:drawable="@drawable/ic_fg"/> </adaptive-icon>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@drawable/ic_bg"/>
+              <foreground android:drawable="@drawable/ic_fg"/>
+          </adaptive-icon>
           EOF
 
-          cat > $A/res/drawable/ic_fg.xml <<'EOF'
+          command -v convert >/dev/null || command -v magick >/dev/null || sudo apt-get install -y imagemagick
+          IM=$(command -v magick || command -v convert)
+          $IM icon.png -alpha set -fuzz 8% -fill none -draw 'color 3,3 floodfill' -trim +repage -resize 288x288 -background none -gravity center -extent 432x432 $A/res/drawable-nodpi/ic_fg.png
+
+          cat > $A/res/drawable/ic_bg.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-          <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108"> <path android:strokeColor="#00E5FF" android:strokeWidth="3" android:pathData="M31.5,31.5h13v13h-13z"/> <path android:strokeColor="#00E5FF" android:strokeWidth="3" android:pathData="M63.5,31.5h13v13h-13z"/> <path android:strokeColor="#00E5FF" android:strokeWidth="3" android:pathData="M31.5,63.5h13v13h-13z"/> <path android:fillColor="#00E5FF" android:pathData="M36,36h4v4h-4zM68,36h4v4h-4zM36,68h4v4h-4zM56,56h6v6h-6zM68,56h10v6h-10zM56,68h6v10h-6zM68,68h10v4h-10zM68,74h4v4h-4z"/> </vector>
+          <shape xmlns:android="http://schemas.android.com/apk/res/android">
+              <gradient android:angle="270" android:startColor="#0A68FD" android:endColor="#004DF5"/>
+          </shape>
           EOF
 
       - name: Build APK
