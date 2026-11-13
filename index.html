@@ -21,6 +21,13 @@ h1{font-size:26px;font-weight:800}
 #list{position:relative;height:calc(100% - 66px);overflow-y:auto;padding:6px 16px 110px;display:flex;flex-direction:column;gap:10px}
 .card{display:flex;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:10px 4px 10px 2px}
 .card:active{border-color:var(--ac)}
+.card.tg{border-color:var(--ac);transform:scale(1.03)}
+.th.fd{background:var(--ac);color:var(--on)}
+.th.fd svg{width:32px;height:32px}
+.fl{display:flex;align-items:center;gap:10px;margin-top:12px;font-weight:700;font-size:15px}
+.fl select{flex:1;min-width:0;height:44px;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);border-radius:14px;padding:0 10px;font:600 15px 'Nunito',system-ui,sans-serif;outline:0}
+#toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,12px);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:40}
+#toast.on{opacity:1;transform:translate(-50%,0)}
 .card.mv,.card.fin{transition:transform .24s cubic-bezier(.2,.8,.2,1)}
 .card.up{position:relative;z-index:5;border-color:var(--ac);transition:none}
 .card.up.fin{transition:transform .24s cubic-bezier(.2,.8,.2,1)}
@@ -38,11 +45,11 @@ h1{font-size:26px;font-weight:800}
 #fab svg{width:30px;height:30px;stroke-width:2.2}
 .ov{position:fixed;inset:0;display:none;z-index:10}
 .ov.on{display:flex}
-#sheet,#cf,#pd{background:rgba(0,0,0,.6)}
+#sheet,#cf,#pd,#rn{background:rgba(0,0,0,.6)}
 #sheet{align-items:flex-end}
-#cf,#pd{align-items:center;justify-content:center;z-index:20;padding:24px}
-.sb{width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:26px 26px 0 0;padding:20px 18px 18px}
-#cf .sb,#pd .sb{border-radius:22px;max-width:360px}
+#cf,#pd,#rn{align-items:center;justify-content:center;z-index:20;padding:24px}
+.sb{width:100%;max-height:92vh;overflow-y:auto;background:var(--sf);border:1px solid var(--bd);border-radius:26px 26px 0 0;padding:20px 18px 18px}
+#cf .sb,#pd .sb,#rn .sb{border-radius:22px;max-width:360px}
 .sb h2{font-size:20px;font-weight:800;margin-bottom:12px}
 textarea{width:100%;min-height:120px;resize:none;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);border-radius:14px;padding:12px;font:600 17px/1.4 'Nunito',system-ui,sans-serif;outline:0}
 textarea:focus{border-color:var(--ac)}
@@ -54,7 +61,14 @@ textarea:focus{border-color:var(--ac)}
 #view,#set{background:var(--bg);flex-direction:column}
 .top{display:flex;align-items:center;gap:4px;padding:10px 10px 4px}
 .top b{font-size:20px;font-weight:800}
-#vm{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 20px 24px;min-height:0}
+#view{overflow:hidden;touch-action:none}
+#view .top{justify-content:center;height:56px}
+#vc{font-size:15px;font-weight:700;color:var(--mu)}
+#vm{flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px;min-height:0}
+#vk{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;will-change:transform}
+.bot{display:flex;justify-content:center;padding:8px 0 28px}
+.cb{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--bd);background:var(--sf);display:grid;place-items:center}
+.cb:active{border-color:var(--ac)}
 .qc{background:#fff;border-radius:20px;border:1px solid var(--bd);line-height:0;overflow:hidden}
 #vt{font-size:20px;font-weight:700;text-align:center;max-height:24vh;overflow-y:auto;word-break:break-word;line-height:1.35}
 .sec{padding:14px 18px}
@@ -64,8 +78,8 @@ textarea:focus{border-color:var(--ac)}
 .opt.on{border-color:var(--ac);color:var(--ac)}
 #pw{display:none;margin:12px 0 0!important}
 #pw.on{display:block}
-#ti,#pw,#pi{width:100%;height:48px;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);border-radius:14px;padding:0 12px;margin-bottom:10px;font:800 17px 'Nunito',system-ui,sans-serif;outline:0;-webkit-user-select:text;user-select:text}
-#ti:focus,#pw:focus,#pi:focus{border-color:var(--ac)}
+#ti,#pw,#pi,#rni{width:100%;height:48px;background:var(--bg);color:var(--tx);border:1.5px solid var(--bd);border-radius:14px;padding:0 12px;margin-bottom:10px;font:800 17px 'Nunito',system-ui,sans-serif;outline:0;-webkit-user-select:text;user-select:text}
+#ti:focus,#pw:focus,#pi:focus,#rni:focus{border-color:var(--ac)}
 .t.w{display:block}
 .t b{display:block;font-weight:800;font-size:17px;word-break:break-word}
 .t span{display:block;font-size:14px;font-weight:600;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -78,7 +92,8 @@ textarea:focus{border-color:var(--ac)}
 </style>
 </head>
 <body>
-<header><h1>QR Kalimat</h1><button class="ib" id="bs" aria-label="Setelan"></button></header>
+<header><div style="display:flex;align-items:center;gap:2px;min-width:0"><button class="ib" id="hb" style="display:none" aria-label="Kembali"></button><h1 id="h1">QR Kalimat</h1></div><button class="ib" id="bs" aria-label="Setelan"></button></header>
+<div id="toast"></div>
 <div id="list"></div>
 <button id="fab" aria-label="Tambah kalimat"></button>
 
@@ -86,22 +101,24 @@ textarea:focus{border-color:var(--ac)}
  <h2 id="st">Kalimat baru</h2>
  <input id="ti" type="text" maxlength="60" placeholder="Judul (tampil di layar awal)">
  <textarea id="ta" placeholder="Isi teks (yang jadi kode QR)"></textarea>
+ <div class="fl"><span>Folder</span><select id="fo"></select></div>
  <label class="pr"><input type="checkbox" id="pv">Privasi: kunci dengan password</label>
  <input id="pw" type="password" placeholder="Buat password">
  <div class="row"><button class="btn" id="bc">Batal</button><button class="btn p" id="bv" disabled>Simpan</button></div>
 </div></div>
 
 <div class="ov" id="view">
- <div class="top"><button class="ib" id="vx" aria-label="Tutup"></button></div>
- <div id="vm"><div id="vh"></div><div class="qc"><canvas id="vq"></canvas></div><div id="vt"></div></div>
+ <div class="top"><b id="vc"></b></div>
+ <div id="vm"><div id="vk"><div id="vh"></div><div class="qc"><canvas id="vq"></canvas></div><div id="vt"></div></div></div>
+ <div class="bot"><button class="cb" id="vx" aria-label="Tutup"></button></div>
 </div>
 
 <div class="ov" id="set">
  <div class="top"><button class="ib" id="sx" aria-label="Kembali"></button><b>Setelan</b></div>
  <div class="sec"><h3>Tema</h3><div class="opts">
   <button class="opt" data-th="dark" id="od"></button><button class="opt" data-th="light" id="ol"></button></div></div>
- <div class="sec"><h3>Data</h3><button class="btn d" id="ca" style="width:100%">Hapus semua kalimat</button>
-  <p class="note">QR dibuat langsung di HP, tanpa internet. Kalimat tersimpan di aplikasi.</p></div>
+ <div class="sec"><h3>Data</h3><div class="row" style="margin:0 0 10px"><button class="btn" id="ex">Ekspor data</button><button class="btn" id="im">Impor data</button></div><button class="btn d" id="ca" style="width:100%">Hapus semua kalimat</button>
+  <p class="note">Ekspor menyimpan semua catatan dan folder ke satu file cadangan. QR dibuat langsung di HP, tanpa internet.</p></div>
 </div>
 
 <div class="ov" id="pd"><div class="sb"><h2>Catatan terkunci</h2>
@@ -109,15 +126,19 @@ textarea:focus{border-color:var(--ac)}
  <p class="note" id="pe" style="color:var(--dg);margin:0;min-height:18px"></p>
  <div class="row"><button class="btn" id="pn">Batal</button><button class="btn p" id="py">Buka</button></div></div></div>
 
+<div class="ov" id="rn"><div class="sb"><h2>Nama folder</h2>
+ <input id="rni" type="text" maxlength="40" placeholder="Nama folder">
+ <div class="row"><button class="btn" id="rnc">Batal</button><button class="btn p" id="rny">Simpan</button></div></div></div>
+
 <div class="ov" id="cf"><div class="sb"><h2 id="cm"></h2>
- <div class="row"><button class="btn" id="cn">Batal</button><button class="btn d" id="cy">Hapus</button></div></div></div>
+ <div class="row"><button class="btn" id="cn">Batal</button><button class="btn d" id="c2" style="display:none"></button><button class="btn d" id="cy">Hapus</button></div></div></div>
 
 <script>
 const $=s=>document.querySelector(s),A=window.Android;
-const P={lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',grip:'<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/>',plus:'<path d="M12 5v14M5 12h14"/>',set:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',back:'<path d="M15 5l-7 7 7 7"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>',qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v1M14 21h1M18 18h3v3h-3z"/>'};
+const P={lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',grip:'<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/>',plus:'<path d="M12 5v14M5 12h14"/>',set:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',back:'<path d="M15 5l-7 7 7 7"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',moon:'<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>',folder:'<path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>',qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v1M14 21h1M18 18h3v3h-3z"/>'};
 const ico=n=>'<svg class="i" viewBox="0 0 24 24">'+P[n]+'</svg>';
 const ls={g(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},s(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-let items=ls.g('qrk_items',[]),theme=ls.g('qrk_theme','dark'),editId=null,cur=0;
+let ctx=null,VL=[],items=ls.g('qrk_items',[]),theme=ls.g('qrk_theme','dark'),editId=null,cur=0;
 
 /* ===== Generator QR (byte mode, koreksi level M, offline) ===== */
 const QR=(()=>{
@@ -180,54 +201,97 @@ function drawQR(cv,text,css){
 /* ===== Tampilan ===== */
 const show=s=>$(s).classList.add('on'),hide=s=>{$(s).classList.remove('on');if(s=='#sheet')$('#ta').blur()};
 const save=()=>ls.s('qrk_items',items);
+let _n=0;const nid=()=>Date.now().toString(36)+(_n++).toString(36)+Math.random().toString(36).slice(2,5);
+const arr=()=>ctx?(items.find(f=>f.id==ctx)||{kids:[]}).kids:items;
+function fnd(id){for(const x of items){if(x.id==id)return x;if(x.folder){const k=x.kids.find(y=>y.id==id);if(k)return k}}return null}
+function rm(id){items=items.filter(x=>x.id!=id);items.forEach(f=>{if(f.folder)f.kids=f.kids.filter(y=>y.id!=id)})}
+const where=id=>{const f=items.find(x=>x.folder&&x.kids.some(k=>k.id==id));return f?f.id:''};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
+function renameFolder(f){$('#rni').value=f.name;$('#rny').onclick=()=>{const v=$('#rni').value.trim();if(v){f.name=v;save();render()}$('#rni').blur();hide('#rn')};show('#rn');setTimeout(()=>{$('#rni').focus();$('#rni').select()},120)}
 const lk=it=>!!(it.priv&&it.ph),shown=it=>it.text;
 const hs=s=>{let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return(4294967296*(2097151&b)+(a>>>0)).toString(36)};
 function askPw(it,fn){$('#pi').value='';$('#pe').textContent='';
  $('#py').onclick=()=>{if(hs(it.salt+$('#pi').value)==it.ph){$('#pi').blur();hide('#pd');fn()}else{$('#pe').textContent='Password salah';$('#pi').value=''}};
  show('#pd');setTimeout(()=>$('#pi').focus(),120)}
-function tgl(){const ex=editId&&items.find(x=>x.id==editId);$('#pw').classList.toggle('on',$('#pv').checked);$('#pw').placeholder=(ex&&lk(ex))?'Password baru (kosongkan = tetap)':'Buat password';chk()}
+function tgl(){const ex=editId&&fnd(editId);$('#pw').classList.toggle('on',$('#pv').checked);$('#pw').placeholder=(ex&&lk(ex))?'Password baru (kosongkan = tetap)':'Buat password';chk()}
 function render(){
- const L=$('#list');L.innerHTML='';
- if(!items.length){L.innerHTML='<div class="empty">'+ico('qr')+'<p>Belum ada kalimat</p><small>Tekan tombol + untuk mengubah sebuah kalimat jadi kode QR.</small></div>';return}
- items.forEach((it,i)=>{
+ const L=$('#list'),AR=arr(),F=ctx&&items.find(f=>f.id==ctx);
+ $('#h1').textContent=F?F.name:'QR Kalimat';$('#hb').style.display=F?'':'none';L.innerHTML='';
+ if(!AR.length){L.innerHTML='<div class="empty">'+ico(F?'folder':'qr')+'<p>'+(F?'Folder kosong':'Belum ada kalimat')+'</p><small>'+(F?'Tekan + untuk menambah catatan di folder ini.':'Tekan + untuk mengubah sebuah kalimat jadi kode QR. Tarik satu catatan ke atas catatan lain untuk membuat folder.')+'</small></div>';return}
+ AR.forEach((it,i)=>{
   const c=document.createElement('div');c.className='card';
   c.innerHTML='<div class="gr">'+ico('grip')+'</div><div class="th"><canvas></canvas></div><div class="t"></div><button class="ib" data-a="e" aria-label="Ubah">'+ico('edit')+'</button><button class="ib" data-a="d" aria-label="Hapus">'+ico('trash')+'</button>';
-  const T=c.querySelector('.t'),L2=lk(it);
-  if(it.title||L2){T.className='t w';T.innerHTML='<b></b><span></span>';T.firstChild.textContent=it.title||'Catatan terkunci';T.lastChild.textContent=L2?'••••••':it.text}else T.textContent=it.text;
-  if(L2){const th=c.querySelector('.th');th.innerHTML=ico('lock');th.style.color='#333'}else drawQR(c.querySelector('canvas'),it.text,64);
+  const T=c.querySelector('.t'),th=c.querySelector('.th');
   c.querySelector('.gr').onpointerdown=e=>startDrag(e,c,i);
-  const G=f=>lk(it)?askPw(it,f):f();
-  c.onclick=e=>{if(e.target.closest('.gr'))return;const b=e.target.closest('button');if(!b)return G(()=>openView(i));b.dataset.a=='e'?G(()=>openEdit(it.id)):G(()=>ask('Hapus kalimat ini?','Hapus',()=>{items=items.filter(x=>x.id!=it.id);save();render()}))};
+  if(it.folder){
+   th.className='th fd';th.innerHTML=ico('folder');T.className='t w';T.innerHTML='<b></b><span></span>';T.firstChild.textContent=it.name;T.lastChild.textContent=it.kids.length+' catatan';
+   c.onclick=e=>{if(e.target.closest('.gr'))return;const b=e.target.closest('button');if(!b){ctx=it.id;render();return}
+    b.dataset.a=='e'?renameFolder(it):ask('Hapus folder "'+it.name+'" beserta '+it.kids.length+' catatan di dalamnya?','Hapus',()=>{rm(it.id);save();render()})};
+  }else{
+   const L2=lk(it);
+   if(it.title||L2){T.className='t w';T.innerHTML='<b></b><span></span>';T.firstChild.textContent=it.title||'Catatan terkunci';T.lastChild.textContent=L2?'••••••':it.text}else T.textContent=it.text;
+   if(L2){th.innerHTML=ico('lock');th.style.color='#333'}else drawQR(c.querySelector('canvas'),it.text,64);
+   const G=f=>L2?askPw(it,f):f();
+   c.onclick=e=>{if(e.target.closest('.gr'))return;const b=e.target.closest('button');if(!b)return G(()=>openView(it.id));b.dataset.a=='e'?G(()=>openEdit(it.id)):G(()=>ask('Hapus kalimat ini?','Hapus',()=>{rm(it.id);save();render()}))};
+  }
   L.appendChild(c)})}
 function startDrag(e,card,i){
- if(items.length<2)return;
+ const A0=arr();if(A0.length<2)return;
  e.preventDefault();
  const L=$('#list'),cs=[...L.children],gap=10,tops=cs.map(c=>c.offsetTop),hs=cs.map(c=>c.offsetHeight),
-  y0=e.clientY,s0=L.scrollTop,g=e.currentTarget;let y=y0,j=i,raf;
+  y0=e.clientY,s0=L.scrollTop,g=e.currentTarget,can=!ctx&&!A0[i].folder;let y=y0,j=i,m=-1,raf;
  g.setPointerCapture(e.pointerId);
  cs.forEach((c,k)=>{if(k!=i)c.classList.add('mv')});card.classList.add('up');
  const upd=()=>{
   const dy=y-y0+L.scrollTop-s0,sh=hs[i]+gap;
   card.style.transform='translateY('+dy+'px) scale(1.02)';
-  const ctr=tops[i]+hs[i]/2+dy;let n=0;
-  cs.forEach((c,k)=>{if(k!=i&&tops[k]+hs[k]/2<ctr)n++});j=n;
-  cs.forEach((c,k)=>{if(k!=i)c.style.transform=(k>i&&k<=j)?'translateY('+(-sh)+'px)':(k<i&&k>=j)?'translateY('+sh+'px)':''})};
+  const ctr=tops[i]+hs[i]/2+dy;let n=0;m=-1;
+  cs.forEach((c,k)=>{if(k==i)return;if(can&&ctr>tops[k]+hs[k]*.3&&ctr<tops[k]+hs[k]*.7)m=k;if(tops[k]+hs[k]/2<ctr)n++});
+  j=m>=0?i:n;
+  cs.forEach((c,k)=>{if(k==i)return;c.classList.toggle('tg',k==m);c.style.transform=m>=0?'':(k>i&&k<=j)?'translateY('+(-sh)+'px)':(k<i&&k>=j)?'translateY('+sh+'px)':''})};
  const loop=()=>{const r=L.getBoundingClientRect();let v=0;if(y<r.top+70)v=-10;else if(y>r.bottom-70)v=10;
   if(v){L.scrollTop+=v;upd()}raf=requestAnimationFrame(loop)};
  const mv=ev=>{y=ev.clientY;upd()};
  const end=()=>{
   cancelAnimationFrame(raf);g.removeEventListener('pointermove',mv);g.removeEventListener('pointerup',end);g.removeEventListener('pointercancel',end);
+  if(m>=0){card.style.transition='transform .24s '+EZ+',opacity .24s';card.style.transform='translateY('+(tops[m]-tops[i])+'px) scale(.85)';card.style.opacity='0';
+   setTimeout(()=>{const T=A0[m],D=A0[i];let nf=null;
+    if(T.folder)T.kids.push(D);else{nf={id:nid(),folder:true,name:'Folder baru',kids:[T,D]};A0[m]=nf}
+    A0.splice(A0.indexOf(D),1);save();render();if(nf)renameFolder(nf)},250);return}
   let t=0;if(j>i){for(let k=i+1;k<=j;k++)t+=hs[k]+gap}else if(j<i){for(let k=j;k<i;k++)t-=hs[k]+gap}
   card.classList.add('fin');card.style.transform='translateY('+t+'px)';
-  setTimeout(()=>{if(j!=i){const m=items.splice(i,1)[0];items.splice(j,0,m);save()}render()},250)};
+  setTimeout(()=>{if(j!=i){const x=A0.splice(i,1)[0];A0.splice(j,0,x);save()}render()},250)};
  g.addEventListener('pointermove',mv);g.addEventListener('pointerup',end);g.addEventListener('pointercancel',end);
  upd();raf=requestAnimationFrame(loop)}
-function openEdit(id){editId=id||null;const it=items.find(x=>x.id==id);$('#ti').value=it?it.title||'':'';$('#ta').value=it?it.text:'';$('#pv').checked=!!(it&&lk(it));$('#pw').value='';tgl();$('#st').textContent=it?'Ubah kalimat':'Kalimat baru';chk();show('#sheet');setTimeout(()=>$('#ta').focus(),120)}
-function chk(){const t=$('#ta').value.trim(),ex=editId&&items.find(x=>x.id==editId),need=$('#pv').checked&&!$('#pw').value&&!(ex&&lk(ex));$('#bv').disabled=!t||!QR.make(t)||need}
-function ask(msg,yes,fn){$('#cm').textContent=msg;$('#cy').textContent=yes;$('#cy').onclick=()=>{hide('#cf');fn()};show('#cf')}
-function drawView(){const it=items[cur];$('#vh').textContent=it.title||'';$('#vh').style.display=it.title?'':'none';$('#vt').textContent=shown(it);drawQR($('#vq'),it.text,Math.min(innerWidth-40,innerHeight*.52))}
-function openView(i){cur=i;show('#view');drawView();A&&A.bright(true)}
+function fillFo(sel){const fs=items.filter(x=>x.folder);$('.fl').style.display=fs.length?'':'none';$('#fo').innerHTML='<option value="">Layar awal</option>'+fs.map(f=>'<option value="'+f.id+'"></option>').join('');[...$('#fo').options].forEach((o,k)=>{if(k)o.textContent=fs[k-1].name});$('#fo').value=sel}
+function openEdit(id){editId=id||null;fillFo(id?where(id):(ctx||''));const it=fnd(id);$('#ti').value=it?it.title||'':'';$('#ta').value=it?it.text:'';$('#pv').checked=!!(it&&lk(it));$('#pw').value='';tgl();$('#st').textContent=it?'Ubah kalimat':'Kalimat baru';chk();show('#sheet');setTimeout(()=>$('#ta').focus(),120)}
+function chk(){const t=$('#ta').value.trim(),ex=editId&&fnd(editId),need=$('#pv').checked&&!$('#pw').value&&!(ex&&lk(ex));$('#bv').disabled=!t||!QR.make(t)||need}
+function ask2(msg,l1,f1,l2,f2){$('#cm').textContent=msg;$('#cy').textContent=l1;$('#cy').className='btn p';$('#cy').onclick=()=>{hide('#cf');f1()};const c=$('#c2');c.style.display='';c.className='btn d';c.textContent=l2;c.onclick=()=>{hide('#cf');f2()};show('#cf')}
+function ask(msg,yes,fn){$('#c2').style.display='none';$('#cy').className='btn d';$('#cm').textContent=msg;$('#cy').textContent=yes;$('#cy').onclick=()=>{hide('#cf');fn()};show('#cf')}
+function drawView(){const it=VL[cur];$('#vc').textContent=(cur+1)+' / '+VL.length;$('#vh').textContent=it.title||'';$('#vh').style.display=it.title?'':'none';$('#vt').textContent=shown(it);drawQR($('#vq'),it.text,Math.min(innerWidth-40,innerHeight*.52))}
+function openView(id){VL=arr().filter(x=>!x.folder);cur=Math.max(0,VL.findIndex(x=>x.id==id));busy=false;g0=null;$('#vk').style.cssText='';show('#view');drawView();A&&A.bright(true)}
 function closeView(){hide('#view');A&&A.bright(false)}
+let busy=false,g0=null;
+const V=$('#view'),K=$('#vk'),EZ='cubic-bezier(.2,.8,.2,1)';
+function snap(){K.style.transition='transform .3s '+EZ;K.style.transform=''}
+function go(dir){
+ const n=cur+dir;
+ if(n<0||n>=VL.length)return snap();
+ const run=()=>{busy=true;
+  K.style.transition='transform .3s cubic-bezier(.4,0,1,1),opacity .3s';
+  K.style.transform='translateX('+(-dir*innerWidth*1.1)+'px) rotate('+(-dir*28)+'deg)';K.style.opacity='0';
+  setTimeout(()=>{cur=n;drawView();
+   K.style.transition='none';K.style.transform='scale(.9)';K.style.opacity='.4';void K.offsetWidth;
+   K.style.transition='transform .3s '+EZ+',opacity .3s';K.style.transform='';K.style.opacity='';
+   setTimeout(()=>{busy=false},310)},300)};
+ if(lk(VL[n])){snap();askPw(VL[n],run)}else run()}
+V.onpointerdown=e=>{if(busy)return;g0={x:e.clientX,y:e.clientY,t:Date.now(),dx:0,dy:0,tg:e.target};V.setPointerCapture(e.pointerId);K.style.transition='none'};
+V.onpointermove=e=>{if(!g0)return;g0.dx=e.clientX-g0.x;g0.dy=e.clientY-g0.y;
+ const d=g0.dx,edge=(d<0&&cur>=VL.length-1)||(d>0&&cur<=0),k=edge?d*.3:d;
+ K.style.transform='translateX('+k+'px) rotate('+k*.04+'deg)'};
+V.onpointerup=V.onpointercancel=()=>{if(!g0)return;const g=g0,d=g.dx,dt=Math.max(1,Date.now()-g.t);g0=null;
+ if(Math.abs(d)<10&&Math.abs(g.dy)<10){K.style.transform='';if(!g.tg.closest('.qc'))closeView();return}
+ if(Math.abs(d)>90||(Math.abs(d)>40&&Math.abs(d)/dt>.5))go(d<0?1:-1);else snap()};
 function applyTheme(){document.documentElement.dataset.theme=theme;A&&A.theme(theme=='dark');document.querySelectorAll('.opt').forEach(b=>b.classList.toggle('on',b.dataset.th==theme))}
 
 $('#bs').innerHTML=ico('set');$('#fab').innerHTML=ico('plus');$('#vx').innerHTML=ico('x');$('#sx').innerHTML=ico('back');
@@ -236,17 +300,31 @@ $('#fab').onclick=()=>openEdit();$('#bs').onclick=()=>show('#set');$('#sx').oncl
 $('#ta').oninput=chk;$('#pw').oninput=chk;$('#pv').onchange=tgl;
 $('#pn').onclick=()=>{$('#pi').blur();hide('#pd')};$('#pi').onkeydown=e=>{if(e.key=='Enter')$('#py').click()};$('#bc').onclick=()=>hide('#sheet');
 $('#sheet').onclick=e=>{if(e.target.id=='sheet')hide('#sheet')};
-$('#bv').onclick=()=>{const t=$('#ta').value.trim();if(!t)return;const it=items.find(x=>x.id==editId);
+$('#bv').onclick=()=>{const t=$('#ta').value.trim();if(!t)return;const it=fnd(editId);
  const pv=$('#pv').checked,ti=$('#ti').value.trim(),pw=$('#pw').value;
- const o=it||{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6)};
+ const o=it||{id:nid()};
  o.text=t;o.title=ti;o.priv=pv;
  if(!pv){delete o.ph;delete o.salt}else if(pw){o.salt=Math.random().toString(36).slice(2);o.ph=hs(o.salt+pw)}
- if(!it)items.unshift(o);
+ const dest=$('#fo').value,fd=dest&&items.find(x=>x.id==dest&&x.folder);
+ if(!it||dest!=where(o.id)){if(it)rm(o.id);(fd?fd.kids:items).unshift(o)}
  save();hide('#sheet');render()};
 $('#cn').onclick=()=>hide('#cf');
 $('#ca').onclick=()=>ask('Hapus semua kalimat?','Hapus semua',()=>{items=[];save();render()});
 document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{theme=b.dataset.th;ls.s('qrk_theme',theme);applyTheme()});
-window.onBack=()=>{for(const s of['#pd','#cf','#sheet','#view','#set']){if($(s).classList.contains('on')){s=='#view'?closeView():hide(s);return true}}return false};
+window.onBack=()=>{for(const s of['#rn','#pd','#cf','#sheet','#view','#set']){if($(s).classList.contains('on')){s=='#view'?closeView():hide(s);return true}}if(ctx){ctx=null;render();return true}return false};
+$('#hb').innerHTML=ico('back');$('#hb').onclick=()=>{ctx=null;render()};
+$('#rnc').onclick=()=>{$('#rni').blur();hide('#rn')};$('#rni').onkeydown=e=>{if(e.key=='Enter')$('#rny').click()};
+window.onDone=toast;
+$('#ex').onclick=()=>{const d=JSON.stringify({app:'qr-kalimat',v:2,items});if(A&&A.exportData)A.exportData(d);else{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='qr-kalimat-backup.json';a.click()}};
+$('#im').onclick=()=>{if(A&&A.importData)A.importData();else toast('Impor hanya di aplikasi')};
+window.onImport=t=>{let d;try{d=JSON.parse(t)}catch(e){return toast('File tidak valid')}
+ const src=Array.isArray(d)?d:d&&d.items;if(!Array.isArray(src))return toast('File tidak valid');
+ const S=v=>typeof v=='string'?v:'';
+ const note=n=>{if(!n||typeof n.text!='string'||!n.text)return null;const l=!!(n.priv&&n.ph&&n.salt),o={id:nid(),text:n.text,title:S(n.title),priv:l};if(l){o.ph=S(n.ph);o.salt=S(n.salt)}return o};
+ const list=src.map(n=>n&&n.folder&&Array.isArray(n.kids)?{id:nid(),folder:true,name:S(n.name)||'Folder',kids:n.kids.map(note).filter(Boolean)}:note(n)).filter(Boolean);
+ if(!list.length)return toast('Tidak ada catatan di file');
+ const done=()=>{ctx=null;save();render();toast('Impor selesai')};
+ ask2('Ditemukan '+list.length+' item. Gabungkan dengan data sekarang atau ganti semuanya?','Gabungkan',()=>{items=items.concat(list);done()},'Ganti',()=>{items=list;done()})};
 window.onresize=()=>{if($('#view').classList.contains('on'))drawView()};
 applyTheme();render();
 </script>
